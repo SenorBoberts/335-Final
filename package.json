@@ -1,0 +1,11 @@
+{
+  "name": "335-final",
+  "version": "1.0.0",
+  "description": "Final project for CMSC335 at the University of Maryland College Park",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
