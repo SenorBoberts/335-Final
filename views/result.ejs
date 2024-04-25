@@ -5,14 +5,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" type="text/css">
-    <title>name</title>
+    <title>result</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
 </head>
 
 <body>
     <header>
-        <!-- <a href="/">Home</a>
-            <a href="/top">Top Songs</a> -->
+
         <nav class="navbar navbar-default">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="/">Home</a></li>
@@ -21,11 +20,17 @@
         </nav>
 
         <br>
-        <form action="http://localhost:5001" method="get">
-			<strong>Artist: </strong><input type="text" name="artist">
-			<strong>Song Name: </strong><input type="text" name="title">
-			<button>Submit Data</button> 
-		</form>		
+
+        <h1>Results</h1>
+        <div>
+            <%- artist %>
+        </div>
+        <div>
+            <%- title %>
+        </div>
+        <div>
+            <%- lyrics %>
+        </div>
 
     </header>
 </body>
