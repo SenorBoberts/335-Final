@@ -11,4 +11,32 @@ app.get("/", (req, res) => {
     res.render("index");
 });
 
+app.post("/song", async (req, res) => {
+    const title = req.body.title;
+    const artist = req.body.artist;
+
+    const lyrics = await fetchLyrics(artist, title);
+
+    const variables = {
+        title: title,
+        artist: artist,
+        lyrics: lyrics,
+    };
+
+    res.render("result", variables);
+});
+
+const fetchLyrics = async (artist, title) => {
+    const lyrics = await fetch(`https://api.lyrics.ovh/v1/${artist}/${title}`)
+        .then((res) => res.json())
+        .then((json) => {
+            if (json.error) {
+                res.render("error");
+            }
+            return json.lyrics.substring(json.lyrics.indexOf(",") + 1);
+        });
+
+    return lyrics;
+};
+
 app.listen(5001);
