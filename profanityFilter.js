@@ -1,1 +1,0 @@
-const swearShield = require("swear-shield");
