@@ -35,16 +35,26 @@ async function setUpMongo() {
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(express.static("public"));
 
 app.get("/", (req, res) => {
-    res.render("index");
+    res.render("index", {
+        HTMLTitle: "Song Finder",
+    });
 });
 
 app.get("/song", async (req, res) => {
-    const title = req.query.title;
-    const artist = req.query.artist;
+    const song = await fetchSongInfo(req.query.artist, req.query.title);
 
-    const lyrics = await fetchLyrics(artist, title);
+    if (song == "error") {
+        res.render("error", {
+            rawTitle: req.query.title,
+            rawArtist: req.query.artist,
+            HTMLTitle: "No Song Found",
+        });
+    }
+
+    const { title, artist, lyrics } = song;
 
     const dbSearch = await db
         .collection(process.env.MONGO_COLLECTION_NAME)
@@ -60,6 +70,7 @@ app.get("/song", async (req, res) => {
         artist: artist,
         lyrics: lyrics,
         likeCount: likeCount,
+        HTMLTitle: title + " - " + artist,
     };
 
     res.render("result", variables);
@@ -77,12 +88,13 @@ app.get("/topSongs", async (req, res) => {
 
     for (let s of songs) {
         const lyricsTrimmed = s.lyrics.trim().substring(0, 100) + "...";
-        let currDiv = `<div class="mt-3 col-lg-4"><h4>${s.title} - ${s.artist}</h4><div><b>Lyrics:</b> ${lyricsTrimmed}</div><div>&#128077; <b>${s.likeCount}</b></div></div>`;
+        let currDiv = `<div class="mt-3 col-lg-4"><a href='/song?artist=${s.artist}&title=${s.title}'><h4>${s.title} - ${s.artist}</h4></a><div><b>Lyrics:</b> ${lyricsTrimmed}</div><div>&#128077; <b>${s.likeCount}</b></div></div>`;
         divs += currDiv;
     }
 
     const variables = {
         topSongs: divs,
+        HTMLTitle: "Top Songs",
     };
 
     res.render("topSongs", variables);
@@ -105,17 +117,35 @@ app.post("/likeSong", async (req, res) => {
     }
 });
 
-const fetchLyrics = async (artist, title) => {
+const fetchSongInfo = async (artist, title) => {
     const lyrics = await fetch(`https://api.lyrics.ovh/v1/${artist}/${title}`)
         .then((res) => res.json())
         .then((json) => {
             if (json.error) {
-                return "";
+                return "error";
             }
-            return json.lyrics.substring(json.lyrics.indexOf(",") + 1);
+            return processAPIResponse(json.lyrics, artist);
         });
 
     return lyrics;
+};
+
+const processAPIResponse = (response) => {
+    // API response (in french!) has the form:
+    // Paroles de la chanson <Song Title> par <Artist> \r <Lyrics>
+    const songInfoAndLyrics = response.split("\r");
+    const titleAndArtist = songInfoAndLyrics[0].replace("Paroles de la chanson ", "");
+    const titleAndArtistSplit = titleAndArtist.split(" par");
+
+    const title = titleAndArtistSplit[0].trim();
+    const artist = titleAndArtistSplit[1].trim();
+    const lyrics = songInfoAndLyrics[1].trim();
+
+    return {
+        title: title,
+        artist: artist,
+        lyrics: lyrics,
+    };
 };
 
 setUpMongo()
