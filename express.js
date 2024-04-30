@@ -56,6 +56,8 @@ app.get("/song", async (req, res) => {
 
     const { title, artist, lyrics } = song;
 
+    lyrics = removeSwears(safeForWork(lyrics));
+
     const dbSearch = await db
         .collection(process.env.MONGO_COLLECTION_NAME)
         .findOne({ title: title, artist: artist, lyrics: lyrics });
