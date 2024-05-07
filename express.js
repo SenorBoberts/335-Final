@@ -1,12 +1,13 @@
 const express = require("express"); /* Accessing express module */
 const path = require("path");
 const bodyParser = require("body-parser");
-const badWords = require("bad-words-next");
-const en = require("bad-words-next/data/en.json");
 const BadWordsNext = require("bad-words-next");
 const app = express(); /* app is a request handler function */
+const en = require("bad-words-next/data/en.json");
 const filter = new BadWordsNext({ data: en });
 require("dotenv").config();
+
+const PORT_NUMBER = 5001;
 
 const uri = process.env.MONGO_URI;
 
@@ -16,8 +17,6 @@ let db;
 
 async function setUpMongo() {
     const client = new MongoClient(uri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
         serverApi: ServerApiVersion.v1,
     });
 
@@ -54,9 +53,12 @@ app.get("/song", async (req, res) => {
         });
     }
 
-    const { title, artist, lyrics } = song;
+    const { title, artist } = song;
+    let { lyrics } = song;
 
-    lyrics = removeSwears(safeForWork(lyrics));
+    // testing without removing the ***'s, lyrics make more sense to end user with them imo
+    lyrics = safeForWork(lyrics);
+    // lyrics = removeSwears(lyrics);
 
     const dbSearch = await db
         .collection(process.env.MONGO_COLLECTION_NAME)
@@ -153,7 +155,8 @@ const processAPIResponse = (response) => {
 setUpMongo()
     .catch(console.error)
     .then(() => {
-        app.listen(5001);
+        app.listen(PORT_NUMBER);
+        console.log("website live at: http://localhost:" + PORT_NUMBER);
     });
 
 function safeForWork(s) {
@@ -161,5 +164,5 @@ function safeForWork(s) {
 }
 
 function removeSwears(s) {
-    return s.replace, (/\*/g, "");
+    return s.replace(/\*/g, "");
 }
