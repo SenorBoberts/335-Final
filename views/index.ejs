@@ -3,21 +3,28 @@
     <%- include('partials/header'); -%>
 
     <body>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid">
-                <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/topSongs">Top Songs</a>
-                    </li>
-                </ul>
-            </div>
+        <nav class="navbar navbar-expand navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">
+                <img src="/note-svg.svg" width="30" height="30" class="d-inline-block align-top mx-2" alt="" />
+                Song Finder
+            </a>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/topSongs">Top Songs</a>
+                </li>
+            </ul>
         </nav>
 
         <br />
-        <div class="container">
+        <div class="mx-auto" style="width: 606px">
+            <div id="intro">
+                <img src="/note-svg.svg" width="60" height="60" class="d-inline-block align-top mx-2" alt="" />
+                Song Finder
+            </div>
+            <div class="my-3" style="text-align: center">Search for a song by the artist and title!</div>
             <form action="http://localhost:5001/song" method="get">
                 <strong>Artist: </strong><input type="text" name="artist" required /> <strong>Song Name: </strong
                 ><input type="text" name="title" required />

@@ -51,6 +51,8 @@ app.get("/song", async (req, res) => {
             rawArtist: req.query.artist,
             HTMLTitle: "No Song Found",
         });
+
+        return;
     }
 
     const { title, artist } = song;
