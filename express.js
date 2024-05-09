@@ -38,7 +38,7 @@ app.use(express.static("public"));
 
 app.get("/", (req, res) => {
     res.render("index", {
-        HTMLTitle: "Song Finder",
+        HTMLTitle: "Song Lyric Finder",
     });
 });
 
@@ -93,7 +93,7 @@ app.get("/topSongs", async (req, res) => {
     let divs = "";
 
     for (let s of songs) {
-        const lyricsTrimmed = s.lyrics.trim().substring(0, 100) + "...";
+        const lyricsTrimmed = s.lyrics.trim().substring(0, 100).trim() + "...";
         let currDiv = `<div class="mt-3 col-lg-4"><a href='/song?artist=${s.artist}&title=${s.title}'><h4>${s.title} - ${s.artist}</h4></a><div><b>Lyrics:</b> ${lyricsTrimmed}</div><div>&#128077; <b>${s.likeCount}</b></div></div>`;
         divs += currDiv;
     }
