@@ -103,7 +103,7 @@ app.get("/topSongs", async (req, res) => {
         HTMLTitle: "Top Songs",
     };
 
-    res.render("topSongs", variables);
+    res.render("topsongs", variables);
 });
 
 app.post("/likeSong", async (req, res) => {
